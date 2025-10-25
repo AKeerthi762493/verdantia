@@ -1,4 +1,5 @@
 import os
+import ssl
 from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -20,11 +21,12 @@ def _init_db():
     mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/verdantia")
     mongo_db = os.getenv("MONGO_DB")
 
-    # Create client with explicit TLS settings for MongoDB Atlas
+    # Create client with relaxed TLS settings for MongoDB Atlas compatibility
     client = MongoClient(
         mongo_uri,
         tls=True,
-        tlsCAFile=certifi.where(),
+        tlsAllowInvalidCertificates=True,
+        tlsAllowInvalidHostnames=True,
         serverSelectionTimeoutMS=30000,
         connectTimeoutMS=20000,
         socketTimeoutMS=20000,
